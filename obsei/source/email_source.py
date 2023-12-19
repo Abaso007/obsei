@@ -88,7 +88,7 @@ class EmailSource(BaseSource):
             if id is None or self.store is None
             else self.store.get_source_state(id)
         )
-        update_state: bool = True if id else False
+        update_state: bool = bool(id)
         state = state or dict()
 
         imap_client = config.get_client()

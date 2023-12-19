@@ -34,11 +34,10 @@ class PlayStoreScrapperConfig(BaseSourceConfig):
 
         if self.app_url is not None:
             self.package_name, self.countries, self.language = PlayStoreScrapperConfig.parse_app_url(self.app_url)
-        else:
-            if not self.package_name and self.app_name:
-                self.package_name = PlayStoreScrapperConfig.search_package_name(
-                    self.app_name
-                )
+        elif not self.package_name and self.app_name:
+            self.package_name = PlayStoreScrapperConfig.search_package_name(
+                self.app_name
+            )
 
         if not self.package_name:
             raise ValueError("Valid `package_name`, `app_name` or `app_url` is mandatory")
@@ -54,28 +53,21 @@ class PlayStoreScrapperConfig(BaseSourceConfig):
         query_dict = parse.parse_qs(parsed_url.query)
         countries = query_dict.get('gl', None)
 
-        language = None
         languages = query_dict.get('hl', None)
-        if languages is not None:
-            language = languages[0]
-
-        package_name = None
+        language = languages[0] if languages is not None else None
         package_ids = query_dict.get('id', None)
-        if package_ids is not None:
-            package_name = package_ids[0]
-
+        package_name = package_ids[0] if package_ids is not None else None
         return package_name, countries, language
 
     @classmethod
     def search_package_name(cls, app_name: str) -> str:
-        base_request_url = f"https://play.google.com"
+        base_request_url = "https://play.google.com"
         search_response = perform_search(
             request_url=base_request_url, query=f"play store {app_name}"
         )
 
         pattern = r"play.google.com/store/apps/details.+?id=([0-9a-z.]+)"
-        match_object = re.search(pattern, search_response.text)
-        if match_object:
+        if match_object := re.search(pattern, search_response.text):
             app_id = str(match_object.group(1))
         else:
             raise RuntimeError("Pattern matching is not found")
@@ -97,7 +89,7 @@ class PlayStoreScrapperSource(BaseSource):
             if id is None or self.store is None
             else self.store.get_source_state(id)
         )
-        update_state: bool = True if id else False
+        update_state: bool = bool(id)
         state = state or dict()
 
         if config.countries is None or len(config.countries) == 0:

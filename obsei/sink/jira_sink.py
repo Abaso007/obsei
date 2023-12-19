@@ -82,20 +82,18 @@ class JiraSink(BaseSink):
         **kwargs: Any,
     ) -> Any:
         responses = []
-        payloads = []
-        for analyzer_response in analyzer_responses:
-            payloads.append(
-                self.convertor.convert(
-                    analyzer_response=analyzer_response,
-                    base_payload={
-                        "project": config.project,
-                        "issuetype": config.issue_type,
-                    },
-                    summary_max_length=config.summary_max_length,
-                    labels_count=config.labels_count,
-                )
+        payloads = [
+            self.convertor.convert(
+                analyzer_response=analyzer_response,
+                base_payload={
+                    "project": config.project,
+                    "issuetype": config.issue_type,
+                },
+                summary_max_length=config.summary_max_length,
+                labels_count=config.labels_count,
             )
-
+            for analyzer_response in analyzer_responses
+        ]
         for payload in payloads:
             response = config.get_jira_client().create_issue(
                 fields=payload, update_history=config.update_history

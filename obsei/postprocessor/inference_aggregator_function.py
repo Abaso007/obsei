@@ -40,7 +40,7 @@ class ClassificationAverageScore(BaseInferenceAggregateFunction):
     def execute(
         self, input_list: List[TextPayload], **kwargs: Any
     ) -> List[TextPayload]:
-        if len(input_list) == 0:
+        if not input_list:
             logger.warning("Can't aggregate empty list")
             return input_list
 
@@ -86,7 +86,7 @@ class ClassificationMaxCategories(BaseInferenceAggregateFunction):
     def execute(
         self, input_list: List[TextPayload], **kwargs: Any
     ) -> List[TextPayload]:
-        if len(input_list) == 0:
+        if not input_list:
             logger.warning("Can't aggregate empty list")
             return input_list
 

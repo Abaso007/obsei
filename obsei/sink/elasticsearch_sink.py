@@ -90,13 +90,11 @@ class ElasticSearchSink(BaseSink):
         **kwargs: Any
     ) -> Any:
 
-        payloads = []
-        for analyzer_response in analyzer_responses:
-            payloads.append(
-                self.convertor.convert(
-                    analyzer_response=analyzer_response,
-                    base_payload=deepcopy(config.base_payload),
-                )
+        payloads = [
+            self.convertor.convert(
+                analyzer_response=analyzer_response,
+                base_payload=deepcopy(config.base_payload),
             )
-
+            for analyzer_response in analyzer_responses
+        ]
         return config.bulk(payloads)

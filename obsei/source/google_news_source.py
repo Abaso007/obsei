@@ -74,7 +74,7 @@ class GoogleNewsSource(BaseSource):
             if id is None or self.store is None
             else self.store.get_source_state(id)
         )
-        update_state: bool = True if id else False
+        update_state: bool = bool(id)
         state = state or dict()
         lookup_period: str = state.get("since_time", None) or DEFAULT_LOOKUP_PERIOD
         since_time: datetime = convert_utc_time(lookup_period)
@@ -91,8 +91,8 @@ class GoogleNewsSource(BaseSource):
 
         if since_time:
             last_after_time = since_time \
-                if since_time > last_after_time \
-                else last_since_time
+                    if since_time > last_after_time \
+                    else last_since_time
 
         before_time: datetime  # end time
         if config.before_date and config.after_date:
