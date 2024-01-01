@@ -63,11 +63,11 @@ class PlayStoreSource(BaseSource):
         source_responses: List[TextPayload] = []
         # Refer https://github.com/googleapis/google-api-python-client/blob/master/docs/start.md
         with build(
-                serviceName="androidpublisher",
-                version="v3",
-                credentials=config.get_google_credentials(),
-                developerKey=config.get_developer_key(),
-        ) as service:
+                    serviceName="androidpublisher",
+                    version="v3",
+                    credentials=config.get_google_credentials(),
+                    developerKey=config.get_developer_key(),
+            ) as service:
             reviews = service.reviews()
             pagination_token: Optional[str] = None
 
@@ -83,7 +83,7 @@ class PlayStoreSource(BaseSource):
                 if state is None
                 else state.get("start_index", None)
             )
-            update_state: bool = True if id else False
+            update_state: bool = bool(id)
             state = state or dict()
             review_id = start_index
 

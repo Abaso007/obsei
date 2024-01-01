@@ -37,7 +37,7 @@ selected = {}
 name_map = {"source": "Observer", "analyzer": "Analyzer", "sink": "Informer"}
 
 for node_name, col in col_map.items():
-    item_list = [k for k in configuration[node_name].keys()]
+    item_list = list(configuration[node_name].keys())
     selected[node_name] = col.selectbox(f"Select {name_map[node_name]}", item_list)
 
 icons = [get_icon_name(None, configuration[k][v]["_icon_"]) for k, v in selected.items()]
@@ -51,10 +51,11 @@ log_component = {}
 for node_name, node_value in selected.items():
     type_config = configuration[node_name][node_value]
     if node_name == "analyzer":
-        type_list = []
-        for config_key in type_config.keys():
-            if config_key != "_icon_":
-                type_list.append(config_key)
+        type_list = [
+            config_key
+            for config_key in type_config.keys()
+            if config_key != "_icon_"
+        ]
         selected_type = col_map[node_name].selectbox(f"{name_map[node_name]} Type", type_list)
         type_config = type_config[selected_type]
 
@@ -85,8 +86,7 @@ for node_name, node_value in selected.items():
 python_code = generate_python(generate_config)
 yaml_code = generate_yaml(generate_config)
 
-execute_button = execute_col.button("🚀 Execute")
-if execute_button:
+if execute_button := execute_col.button("🚀 Execute"):
     execute_workflow(generate_config, spinner_col, log_component)
 
 with download_python_col:

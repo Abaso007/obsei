@@ -96,7 +96,7 @@ class PayloadConvertor(Convertor):
             if created_at_str_parsed is not None:
                 enquiry["ReportedAt"] = created_at_str_parsed
 
-            kv_str_list = [k + ": " + str(v) for k, v in enquiry.items()]
+            kv_str_list = [f"{k}: {str(v)}" for k, v in enquiry.items()]
             request_payload["enquiryMessage"] = "\n".join(kv_str_list)
         else:
             message = {
@@ -108,10 +108,12 @@ class PayloadConvertor(Convertor):
                 "userProfile": user_url,
                 "sentiment": sentiment,
                 "predictedCategories": ",".join(classification_list),
-                "metadata": str(json.dumps(analyzer_response.segmented_data, ensure_ascii=False)),
+                "metadata": json.dumps(
+                    analyzer_response.segmented_data, ensure_ascii=False
+                ),
                 "originatedAt": created_at_str,
             }
-            request_payload["messageDetail"] = str(json.dumps(message, ensure_ascii=False))
+            request_payload["messageDetail"] = json.dumps(message, ensure_ascii=False)
 
         return request_payload
 
@@ -137,21 +139,19 @@ class DailyGetSink(HttpSink):
     ) -> Any:
         headers = config.headers
 
-        payloads = []
         responses = []
-        for analyzer_response in analyzer_responses:
-            payloads.append(
-                self.convertor.convert(
-                    analyzer_response=analyzer_response,
-                    base_payload=dict()
-                    if config.base_payload is None
-                    else deepcopy(config.base_payload),
-                    source_information=config.source_information,
-                    use_enquiry_api=config.use_enquiry_api,
-                    partner_id=config.partner_id
-                )
+        payloads = [
+            self.convertor.convert(
+                analyzer_response=analyzer_response,
+                base_payload=dict()
+                if config.base_payload is None
+                else deepcopy(config.base_payload),
+                source_information=config.source_information,
+                use_enquiry_api=config.use_enquiry_api,
+                partner_id=config.partner_id,
             )
-
+            for analyzer_response in analyzer_responses
+        ]
         for payload in payloads:
             response = requests.post(
                 url=config.url,

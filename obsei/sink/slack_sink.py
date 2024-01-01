@@ -47,10 +47,10 @@ class SlackSink(BaseSink):
         **kwargs: Any,
     ) -> Any:
         responses = []
-        payloads = []
-        for analyzer_response in analyzer_responses:
-            payloads.append(self.convertor.convert(analyzer_response=analyzer_response))
-
+        payloads = [
+            self.convertor.convert(analyzer_response=analyzer_response)
+            for analyzer_response in analyzer_responses
+        ]
         for payload in payloads:
             if config.jinja_template is not None:
                 template = Template(config.jinja_template)

@@ -71,7 +71,7 @@ class FacebookSource(BaseSource):
             if identifier is None or self.store is None
             else self.store.get_source_state(identifier)
         )
-        update_state: bool = True if identifier else False
+        update_state: bool = bool(identifier)
         state = state or dict()
         since_timestamp: Optional[int] = state.get("since_timestamp", None)
         if since_timestamp is None:

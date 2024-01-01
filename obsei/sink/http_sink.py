@@ -29,18 +29,16 @@ class HttpSink(BaseSink):
 
         headers = config.headers or DEFAULT_HEADERS
 
-        payloads = []
         responses = []
-        for analyzer_response in analyzer_responses:
-            payloads.append(
-                self.convertor.convert(
-                    analyzer_response=analyzer_response,
-                    base_payload=dict()
-                    if config.base_payload is None
-                    else deepcopy(config.base_payload),
-                )
+        payloads = [
+            self.convertor.convert(
+                analyzer_response=analyzer_response,
+                base_payload=dict()
+                if config.base_payload is None
+                else deepcopy(config.base_payload),
             )
-
+            for analyzer_response in analyzer_responses
+        ]
         for payload in payloads:
             req = Request(config.url, data=obj_to_json(payload), headers=headers)
             response = urlopen(req)

@@ -176,23 +176,22 @@ class WorkflowStore(BaseStore):
             None if row.analyzer_state is None else json.loads(row.analyzer_state)
         )
 
-        workflow_states: Optional[WorkflowState] = None
-        if source_state_dict or sink_state_dict or analyzer_state_dict:
-            workflow_states = WorkflowState(
+        return (
+            WorkflowState(
                 source_state=source_state_dict,
                 sink_state=sink_state_dict,
                 analyzer_state=analyzer_state_dict,
             )
-
-        return workflow_states
+            if source_state_dict or sink_state_dict or analyzer_state_dict
+            else None
+        )
 
     @staticmethod
     def _convert_sql_row_to_workflow_data(row: Any) -> Workflow:
 
         config_dict = json.loads(row.config)
-        workflow = Workflow(
+        return Workflow(
             id=row.id,
             config=WorkflowConfig(**config_dict),
             states=WorkflowStore._convert_sql_row_to_workflow_state(row),
         )
-        return workflow

@@ -35,7 +35,7 @@ workflow = Workflow(
 source.store.add_workflow(workflow)
 
 
-for i in range(1, 4):
+for _ in range(1, 4):
     print_state(workflow.id)
     source_response_list = source.lookup(source_config, id=workflow.id)
 

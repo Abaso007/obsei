@@ -170,7 +170,10 @@ class SpacyLemmatization(TextCleaningFunction):
             )
 
     def execute(self, tokens: List[str], **kwargs: Any) -> List[str]:
-        processed_tokens: List[str] = []
-        for doc in self._nlp.pipe(texts=tokens, batch_size=self.batch_size, n_process=self.n_process):
-            processed_tokens.append(" ".join([token.lemma_ for token in doc]))
+        processed_tokens: List[str] = [
+            " ".join([token.lemma_ for token in doc])
+            for doc in self._nlp.pipe(
+                texts=tokens, batch_size=self.batch_size, n_process=self.n_process
+            )
+        ]
         return processed_tokens
