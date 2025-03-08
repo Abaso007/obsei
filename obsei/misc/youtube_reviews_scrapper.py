@@ -69,8 +69,7 @@ class YouTubeCommentExtractor(BaseModel):
                     else:
                         stack.append(value)
             elif isinstance(current_item, list):
-                for value in current_item:
-                    stack.append(value)
+                stack.extend(iter(current_item))
 
     def _fetch_comments(self, until_datetime: Optional[datetime] = None) -> Generator[Any, Any, None]:
         session = requests.Session()
@@ -120,16 +119,16 @@ class YouTubeCommentExtractor(BaseModel):
                 # raise RuntimeError('Failed to set sorting')
 
             actions = list(self._search_dict(response, 'reloadContinuationItemsCommand')) + \
-                      list(self._search_dict(response, 'appendContinuationItemsAction'))
+                          list(self._search_dict(response, 'appendContinuationItemsAction'))
 
             for action in actions:
                 for item in action.get('continuationItems', []):
                     if action['targetId'] == 'comments-section':
                         # Process continuations for comments and replies.
-                        continuations[:0] = [ep for ep in self._search_dict(item, 'continuationEndpoint')]
-                    if self.fetch_replies:
+                        continuations[:0] = list(self._search_dict(item, 'continuationEndpoint'))
                         # TODO: Fix it. This functionality is broken
-                        if action['targetId'].startswith('comment-replies-item') and 'continuationItemRenderer' in item:
+                    if action['targetId'].startswith('comment-replies-item') and 'continuationItemRenderer' in item:
+                        if self.fetch_replies:
                             # Process the 'Show more replies' button
                             continuations.append(next(self._search_dict(item, 'buttonRenderer'))['command'])
 

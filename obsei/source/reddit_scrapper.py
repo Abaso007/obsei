@@ -55,7 +55,7 @@ class RedditScrapperSource(BaseSource):
             if identifier is None or self.store is None
             else self.store.get_source_state(identifier)
         )
-        update_state: bool = True if identifier else False
+        update_state: bool = bool(identifier)
         state = state or dict()
 
         scrapper_stat: Dict[str, Any] = (

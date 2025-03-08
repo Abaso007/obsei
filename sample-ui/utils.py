@@ -16,8 +16,7 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 
 def img_to_bytes(img_path):
     img_bytes = pathlib.Path(img_path).read_bytes()
-    encoded = base64.b64encode(img_bytes).decode()
-    return encoded
+    return base64.b64encode(img_bytes).decode()
 
 
 # Copied from https://github.com/jrieke/traingenerator/blob/main/app/utils.py
@@ -137,7 +136,7 @@ def render_config(config, component, help_str=None, parent_key=None):
 
 
 def generate_python(generate_config):
-    return f"""
+    return """
 from obsei.configuration import ObseiConfiguration
 
 # This is Obsei workflow path and filename

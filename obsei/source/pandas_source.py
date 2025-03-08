@@ -20,8 +20,9 @@ class PandasSourceConfig(BaseSourceConfig):
         if len(self.text_columns) == 0:
             raise ValueError("`text_columns` cannot be empty")
 
-        if not all(
-            [text_column in self.dataframe.columns for text_column in self.text_columns]
+        if any(
+            text_column not in self.dataframe.columns
+            for text_column in self.text_columns
         ):
             raise ValueError("Every `text_columns` should be present in `dataframe`")
 

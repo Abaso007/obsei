@@ -44,7 +44,7 @@ class InferenceAggregator(BasePostprocessor):
             segregated_payload[doc_id].append(payload)
 
         # sort based on chunk id
-        for doc_id, payloads in segregated_payload.items():
+        for payloads in segregated_payload.values():
             if (
                 len(payloads) > 0
                 and payloads[0].meta

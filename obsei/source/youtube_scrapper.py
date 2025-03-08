@@ -49,7 +49,7 @@ class YoutubeScrapperSource(BaseSource):
             if id is None or self.store is None
             else self.store.get_source_state(identifier)
         )
-        update_state: bool = True if identifier else False
+        update_state: bool = bool(identifier)
         state = state or dict()
 
         lookup_period: str = state.get("since_time", config.lookup_period)

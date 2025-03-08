@@ -46,7 +46,7 @@ workflow = Workflow(
 # Insert workflow config to DB store
 store.add_workflow(workflow)
 
-for i in range(1, 4):
+for _ in range(1, 4):
     print_state(workflow.id)
     # Now always pass workflow id to lookup function
     # Observer will fetch old data from DB suing this id and later store new updated state data against this id to DB 

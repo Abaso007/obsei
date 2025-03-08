@@ -192,7 +192,7 @@ class TwitterSource(BaseSource):
         until_id: Optional[int] = (
             config.until_id or None if state is None else state.get("until_id", None)
         )
-        update_state: bool = True if identifier else False
+        update_state: bool = bool(identifier)
         state = state or dict()
         max_tweet_id = since_id
         lookup_period = config.lookup_period
@@ -304,14 +304,7 @@ class TwitterSource(BaseSource):
                     or_tokens.append(f'{"".join(tokens)}')
 
         and_query_str = ""
-        or_query_str = ""
-
-        if or_tokens:
-            if len(or_tokens) > 0:
-                or_query_str = f'{" OR ".join(or_tokens)}'
-            else:
-                or_query_str = f'{"".join(or_tokens)}'
-
+        or_query_str = f'{" OR ".join(or_tokens)}' if or_tokens else ""
         if operators:
             and_tokens.append(f'{" ".join(operators)}')
 

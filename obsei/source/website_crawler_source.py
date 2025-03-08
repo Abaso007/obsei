@@ -56,7 +56,7 @@ class TrafilaturaCrawlerConfig(BaseCrawlerConfig):
         )
         extracted_dict: Dict[str, Any] = {}
         if url_content is not None:
-            extracted_data = extract(
+            if extracted_data := extract(
                 filecontent=url_content,
                 record_id=url_id,
                 no_fallback=self.no_fallback,
@@ -69,9 +69,7 @@ class TrafilaturaCrawlerConfig(BaseCrawlerConfig):
                 deduplicate=self.deduplicate,
                 url_blacklist=self.url_blacklist,
                 target_language=self.target_language,
-            )
-
-            if extracted_data:
+            ):
                 extracted_dict = json.loads(extracted_data)
                 if "raw-text" in extracted_dict:
                     del extracted_dict["raw-text"]

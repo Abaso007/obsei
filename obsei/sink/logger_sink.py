@@ -26,12 +26,10 @@ class LoggerSink(BaseSink):
         config: LoggerSinkConfig,
         **kwargs: Any,
     ) -> Any:
-        converted_responses = []
-        for analyzer_response in analyzer_responses:
-            converted_responses.append(
-                self.convertor.convert(analyzer_response=analyzer_response)
-            )
-
+        converted_responses = [
+            self.convertor.convert(analyzer_response=analyzer_response)
+            for analyzer_response in analyzer_responses
+        ]
         for response in converted_responses:
             dict_to_print = (
                 vars(response) if hasattr(response, "__dict__") else response

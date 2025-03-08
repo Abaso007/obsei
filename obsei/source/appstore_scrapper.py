@@ -32,9 +32,8 @@ class AppStoreScrapperConfig(BaseSourceConfig):
 
         if self.app_url is not None:
             self.app_id, self.countries, self.app_name = AppStoreScrapperConfig.parse_app_url(self.app_url)
-        else:
-            if not self.app_id and self.app_name:
-                self.app_id = AppStoreScrapperConfig.search_id(self.app_name)
+        elif not self.app_id and self.app_name:
+            self.app_id = AppStoreScrapperConfig.search_id(self.app_name)
 
         if not self.app_id:
             raise ValueError("Valid `package_name`, `app_name` or `app_url` is mandatory")
@@ -72,8 +71,7 @@ class AppStoreScrapperConfig(BaseSourceConfig):
         )
 
         pattern = fr"{landing_url}/[a-z]{{2}}/.+?/id([0-9]+)"
-        match_object = re.search(pattern, search_response.text)
-        if match_object:
+        if match_object := re.search(pattern, search_response.text):
             app_id = str(match_object.group(1))
         else:
             raise RuntimeError("Pattern matching is not found")
@@ -93,7 +91,7 @@ class AppStoreScrapperSource(BaseSource):
             if identifier is None or self.store is None
             else self.store.get_source_state(identifier)
         )
-        update_state: bool = True if identifier else False
+        update_state: bool = bool(identifier)
         state = state or dict()
 
         if config.countries is None or len(config.countries) == 0:

@@ -53,7 +53,7 @@ class ZendeskPayloadConvertor(Convertor):
                 str(v)
                 for k, v in analyzer_response.segmented_data.items()
             ]
-            payload["tags"] = [label for label in labels[:labels_count]]
+            payload["tags"] = list(labels[:labels_count])
 
         return payload
 
@@ -124,18 +124,17 @@ class ZendeskSink(BaseSink):
             logger.error("Zendesk credentials are not provided")
             return responses
 
-        for analyzer_response in analyzer_responses:
-            payloads.append(
-                self.convertor.convert(
-                    analyzer_response=analyzer_response,
-                    base_payload=dict()
-                    if config.base_payload is None
-                    else deepcopy(config.base_payload),
-                    summary_max_length=config.summary_max_length,
-                    labels_count=config.labels_count,
-                )
+        payloads.extend(
+            self.convertor.convert(
+                analyzer_response=analyzer_response,
+                base_payload=dict()
+                if config.base_payload is None
+                else deepcopy(config.base_payload),
+                summary_max_length=config.summary_max_length,
+                labels_count=config.labels_count,
             )
-
+            for analyzer_response in analyzer_responses
+        )
         for payload in payloads:
             session = config.cred_info.get_session()
             response = session.post(

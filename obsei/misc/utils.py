@@ -69,10 +69,7 @@ def obj_to_markdown(
             item_view = enumerate(obj)
 
         for key, val in item_view:
-            if add_key:
-                header = f"{key_prefix} {key}"
-            else:
-                header = key_prefix
+            header = f"{key_prefix} {key}" if add_key else key_prefix
             if is_collection(val):
                 child_markdown = obj_to_markdown(
                     obj=val,
@@ -167,9 +164,7 @@ def tag_visible(element: Any) -> bool:
         "[document]",
     ]:
         return False
-    if isinstance(element, Comment):
-        return False
-    return True
+    return not isinstance(element, Comment)
 
 
 def text_from_html(body: Union[str, bytes]) -> str:

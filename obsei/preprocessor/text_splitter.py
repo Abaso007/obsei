@@ -45,16 +45,16 @@ class TextSplitter(BaseTextPreprocessor):
     ) -> List[TextPayload]:
         text_splits: List[TextPayload] = []
 
-        for idx, input_data in enumerate(input_list):
-            if (
-                config.document_id_key
-                and input_data.meta
-                and config.document_id_key in input_data.meta
-            ):
-                document_id = str(input_data.meta.get(config.document_id_key))
-            else:
-                document_id = uuid.uuid4().hex
-
+        for input_data in input_list:
+            document_id = (
+                str(input_data.meta.get(config.document_id_key))
+                if (
+                    config.document_id_key
+                    and input_data.meta
+                    and config.document_id_key in input_data.meta
+                )
+                else uuid.uuid4().hex
+            )
             if config.honor_paragraph_boundary:
                 paragraphs = input_data.processed_text.split(config.paragraph_marker)
             else:
